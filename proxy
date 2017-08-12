@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+#==================================================================================
+# имя файла скрипта на всякий случай
+SCRIPT="$0"
+# описание работы скрипнта --help
+showHelp() {
+    echo ""
+    echo "usage: ./proxy [start] [stop] [ps] [restart] [check-config] [build] [build-nocache]"
+    echo ""
+    echo "      start             - start application"
+    echo "      stop              - stop application"
+    echo "      restart           - restart application"
+    echo "      ps                - list of working containers"
+    echo "      check-config      - check configuration of nginx reverse-proxy.yml file"
+    echo "      build             - build docker containers for nginx reverse-proxy"
+    echo "      build-nocache     - force build docker containers for nginx reverse-proxy without docker cache"
+    echo ""
+}
+# Текущее окружение
+CURRENT_ENV=
+
+# Определяем где запущен скрипт [Linux | Windows | MacOS]
+PLATFORM='unknown'
+UNAMESTR=`uname`
+if [[ "$UNAMESTR" == 'Linux' ]]; then
+   PLATFORM='linux'
+elif [[ "$UNAMESTR" == 'MINGW64_NT-10.0' ]]; then
+    PLATFORM='windows'
+elif [[ "$UNAMESTR" == 'Darwin' ]]; then
+   PLATFORM='mac'
+fi
+
+# имя функции для запуска
+FUNCTION=
+if [ ! -z $1 ]; then
+    FUNCTION="$1"
+fi
+
+build-nocache(){
+    echo "Building docker images without cache."
+    docker-compose -f reverse-proxy.yml build --no-cache
+}
+
+build(){
+    echo "Building docker images with cache."
+    docker-compose -f reverse-proxy.yml build
+}
+
+ps(){
+    echo "nginx reverse-proxy container status"
+    docker-compose -f reverse-proxy.yml ps
+}
+start(){
+    echo "Start nginx reverse-proxy"
+    docker-compose -f reverse-proxy.yml up -d
+    ps
+    echo 'Please, see logs above to find out container status.'
+}
+stop(){
+    echo "Stop nginx reverse-proxy"
+    docker-compose -f reverse-proxy.yml down
+    ps
+    echo 'Please, see logs above to find out container status.'
+}
+restart(){
+    echo "Restart nginx reverse-proxy"
+    docker-compose -f reverse-proxy.yml down
+    docker-compose -f reverse-proxy.yml up -d
+    ps
+    echo 'Please, see logs above to find out container status.'
+}
+
+check-config(){
+    echo "Config status:"
+    docker-compose -f reverse-proxy.yml config
+}
+
+self-destroy(){
+    echo "Stop nginx reverse-proxy"
+    stop
+    echo "Здесь могла быть ваша реклама :)"
+}
+
+case "$1" in
+-h|--help)
+    showHelp
+    ;;
+self-destroy)
+    self-destroy
+    ;;
+*)
+    if [ ! -z $(type -t $FUNCTION | grep function) ]; then
+        $1
+    else
+        showHelp
+    fi
+esac

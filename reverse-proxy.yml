@@ -6,10 +6,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
     networks:
-      - ${project_network_name}
+      - "${PROJECT_NETWORK_NAME}"
 networks:
   torpaydo:
     external:
-      name: ${project_network_name}_default
+      name: "${PROJECT_NETWORK_NAME}_default"

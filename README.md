@@ -9,5 +9,7 @@ Docker nginx proxy container.
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
+First set
 
-    docker-compose up -d
+    $ chmod +x proxy
+    $ ./proxy start
