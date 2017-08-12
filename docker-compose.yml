@@ -8,8 +8,8 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
-      - torpaydo
+      - ${project_network_name}
 networks:
   torpaydo:
     external:
-      name: torpaydo_default
+      name: ${project_network_name}_default
