@@ -10,3 +10,4 @@ Docker nginx proxy container.
 
 ### How do I get set up? ###
 
+    docker-compose up -d
